@@ -1,5 +1,8 @@
 {
-    "name": "react/socket-client",
+    "name": "werkint/reactphp-socket-client",
+    "replace": {
+        "react/socket-client": "v0.5.3"
+    },
     "description": "Async connector to open TCP/IP and SSL/TLS based connections.",
     "keywords": ["socket"],
     "license": "MIT",

@@ -14,14 +14,14 @@ use UnexpectedValueException;
 class StreamEncryption
 {
     private $loop;
-    private $method = STREAM_CRYPTO_METHOD_TLS_CLIENT;
+    private $method;
 
     private $errstr;
     private $errno;
 
     private $wrapSecure = false;
 
-    public function __construct(LoopInterface $loop)
+    public function __construct(LoopInterface $loop, $method = null)
     {
         $this->loop = $loop;
 
@@ -32,6 +32,11 @@ class StreamEncryption
         //  get an empty string back because the buffer indicator could be wrong
         if (version_compare(PHP_VERSION, '5.6.8', '<')) {
             $this->wrapSecure = true;
+        }
+
+        $this->method = $method;
+        if ($this->method === null) {
+            $this->method = STREAM_CRYPTO_METHOD_TLS_CLIENT;
         }
 
         if (defined('STREAM_CRYPTO_METHOD_TLSv1_0_CLIENT')) {
@@ -101,7 +106,9 @@ class StreamEncryption
     public function toggleCrypto($socket, Deferred $deferred, $toggle)
     {
         set_error_handler(array($this, 'handleError'));
+        stream_set_blocking ($socket, true);
         $result = stream_socket_enable_crypto($socket, $toggle, $this->method);
+        stream_set_blocking ($socket, false);
         restore_error_handler();
 
         if (true === $result) {

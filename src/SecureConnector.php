@@ -13,10 +13,10 @@ class SecureConnector implements ConnectorInterface
     private $streamEncryption;
     private $context;
 
-    public function __construct(ConnectorInterface $connector, LoopInterface $loop, array $context = array())
+    public function __construct(ConnectorInterface $connector, LoopInterface $loop, array $context = array(), $method = null)
     {
         $this->connector = $connector;
-        $this->streamEncryption = new StreamEncryption($loop);
+        $this->streamEncryption = new StreamEncryption($loop, $method);
         $this->context = $context;
     }
 
